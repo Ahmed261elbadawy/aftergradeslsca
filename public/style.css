@@ -158,6 +158,21 @@ input:focus, select:focus {
   margin-bottom: 20px;
 }
 
+.price-banner-line + .price-banner-line::before {
+  content: ", ";
+}
+
+@media (max-width: 480px) {
+  .price-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .price-banner-line + .price-banner-line::before {
+    content: "";
+  }
+}
+
 .pay-box .num {
   font-family: 'Courier New', monospace;
   color: var(--text);
@@ -355,4 +370,94 @@ tr:last-child td { border-bottom: none; }
   max-width: 380px;
   margin: 80px auto;
   padding: 0 20px;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    padding: 14px 16px;
+  }
+
+  .topbar img {
+    height: 36px;
+  }
+
+  .topbar-class {
+    font-size: 0.62rem;
+  }
+
+  .wrap {
+    padding: 20px 14px 40px;
+  }
+
+  .card {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .subtitle {
+    font-size: 0.88rem;
+  }
+
+  label {
+    font-size: 0.85rem;
+  }
+
+  input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select {
+    padding: 12px 12px;
+    font-size: 1rem;
+  }
+
+  .pay-method {
+    padding: 10px 12px;
+  }
+
+  .pay-method-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .btn-primary {
+    padding: 14px 18px;
+    font-size: 1rem;
+  }
+
+  .admin-wrap {
+    padding: 16px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .actions-top {
+    flex-direction: column;
+  }
+
+  .actions-top a, .actions-top button {
+    width: 100%;
+    text-align: center;
+  }
+
+  th, td {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .login-wrap {
+    margin: 48px auto;
+  }
 }

@@ -23,6 +23,7 @@
     <% if (submissions.length === 0) { %>
       <div class="empty-state">No submissions yet.</div>
     <% } else { %>
+      <div class="table-scroll">
       <table>
         <thead>
           <tr>
@@ -70,6 +71,7 @@
           <% }); %>
         </tbody>
       </table>
+      </div>
     <% } %>
   </div>
 

@@ -50,19 +50,21 @@
               <td><%= s.email %></td>
               <td><%= s.guest_of || '-' %></td>
               <td><%= s.paid_to || '-' %></td>
-              <td><span class="badge badge-<%= s.status %>"><%= s.status === 'rejected' ? 'fake' : s.status %></span></td>
+              <td>
+                <span class="badge badge-<%= s.status %>" data-badge-for="<%= s.id %>"><%= s.status === 'rejected' ? 'fake' : s.status %></span>
+              </td>
               <td><%= s.created_at %></td>
               <td>
-                <form class="status-form" action="/admin/<%= s.id %>/status" method="POST">
-                  <select name="status" onchange="this.form.submit()">
+                <div class="actions-row">
+                  <select class="status-select" data-id="<%= s.id %>" onchange="updateStatus(this)">
                     <option value="pending" <%= s.status === 'pending' ? 'selected' : '' %>>Pending</option>
                     <option value="approved" <%= s.status === 'approved' ? 'selected' : '' %>>Approved</option>
                     <option value="rejected" <%= s.status === 'rejected' ? 'selected' : '' %>>Fake</option>
                   </select>
-                </form>
-                <form action="/admin/<%= s.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this submission?');">
-                  <button type="submit" class="del-btn">Delete</button>
-                </form>
+                  <form action="/admin/<%= s.id %>/delete" method="POST" onsubmit="return confirm('Delete this submission?');">
+                    <button type="submit" class="del-btn">Delete</button>
+                  </form>
+                </div>
               </td>
             </tr>
           <% }); %>
@@ -70,5 +72,36 @@
       </table>
     <% } %>
   </div>
+
+  <script>
+    const labels = { pending: 'pending', approved: 'approved', rejected: 'fake' };
+
+    async function updateStatus(select) {
+      const id = select.dataset.id;
+      const status = select.value;
+      const badge = document.querySelector(`[data-badge-for="${id}"]`);
+      const prevClass = badge.className;
+      const prevText = badge.textContent;
+
+      badge.className = `badge badge-${status}`;
+      badge.textContent = labels[status];
+      select.disabled = true;
+
+      try {
+        const res = await fetch(`/admin/${id}/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `status=${encodeURIComponent(status)}`
+        });
+        if (!res.ok) throw new Error('failed');
+      } catch (err) {
+        badge.className = prevClass;
+        badge.textContent = prevText;
+        alert('Could not update status, please try again.');
+      } finally {
+        select.disabled = false;
+      }
+    }
+  </script>
 </body>
 </html>

@@ -312,9 +312,10 @@ tr:last-child td { border-bottom: none; }
 .badge-approved { background: #e2f3e8; color: var(--success); }
 .badge-rejected { background: #fdecea; color: var(--rejected); }
 
-.status-form { display: inline-flex; gap: 6px; align-items: center; }
-.status-form select { width: auto; padding: 5px 8px; font-size: 0.8rem; }
-.status-form button { padding: 5px 10px; font-size: 0.78rem; }
+.actions-row { display: flex; gap: 8px; align-items: center; }
+.actions-row form { display: inline-flex; }
+.status-select { width: auto; padding: 5px 8px; font-size: 0.8rem; }
+.actions-row button { padding: 5px 10px; font-size: 0.78rem; }
 
 .del-btn { background: #fdecea; color: var(--rejected); padding: 5px 10px; font-size: 0.78rem; }
 

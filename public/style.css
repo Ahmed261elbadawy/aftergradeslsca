@@ -22,7 +22,8 @@ body {
 }
 
 .topbar {
-  background: var(--navy);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
   padding: 18px 24px;
   display: flex;
   align-items: center;
@@ -51,7 +52,7 @@ body {
 }
 
 .topbar-class {
-  color: #fff;
+  color: var(--navy-dark);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -145,6 +146,16 @@ input:focus, select:focus {
 .pay-box .name {
   font-weight: 700;
   color: var(--navy-dark);
+}
+
+.price-banner {
+  background: var(--navy);
+  color: #fff;
+  text-align: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
 }
 
 .pay-box .num {

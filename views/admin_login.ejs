@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login, After Grad 2026</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="login-wrap">
+    <div class="card">
+      <h1>Admin Login</h1>
+      <p class="subtitle">Enter the admin password to view submissions.</p>
+
+      <% if (error) { %>
+        <div class="error"><%= error %></div>
+      <% } %>
+
+      <form action="/admin/login" method="POST">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autofocus>
+        <button type="submit" class="btn-primary">Log In</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

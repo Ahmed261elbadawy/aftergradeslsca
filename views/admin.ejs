@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin, After Grad 2026</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <h1>Submissions (<%= submissions.length %>)</h1>
+      <div class="actions-top">
+        <a href="/admin/export.csv" class="btn btn-outline" style="text-decoration:none; display:inline-flex; align-items:center;">Export to Excel (CSV)</a>
+        <form action="/admin/logout" method="POST">
+          <button type="submit" class="btn-outline">Log Out</button>
+        </form>
+      </div>
+    </div>
+
+    <% if (submissions.length === 0) { %>
+      <div class="empty-state">No submissions yet.</div>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Screenshot</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Coming With</th>
+            <th>Paid To</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% submissions.forEach(function(s) { %>
+            <tr>
+              <td>
+                <a href="<%= s.screenshot_url %>" target="_blank">
+                  <img class="thumb" src="<%= s.screenshot_url %>" alt="screenshot">
+                </a>
+              </td>
+              <td><%= s.name %></td>
+              <td><%= s.phone %></td>
+              <td><%= s.email %></td>
+              <td><%= s.guest_of || '-' %></td>
+              <td><%= s.paid_to || '-' %></td>
+              <td><span class="badge badge-<%= s.status %>"><%= s.status %></span></td>
+              <td><%= s.created_at %></td>
+              <td>
+                <form class="status-form" action="/admin/<%= s.id %>/status" method="POST">
+                  <select name="status">
+                    <option value="pending" <%= s.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                    <option value="approved" <%= s.status === 'approved' ? 'selected' : '' %>>Approved</option>
+                    <option value="rejected" <%= s.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+                  </select>
+                  <button type="submit" class="btn-outline">Save</button>
+                </form>
+                <form action="/admin/<%= s.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this submission?');">
+                  <button type="submit" class="del-btn">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</body>
+</html>

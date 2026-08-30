@@ -46,6 +46,7 @@ function requireAdmin(req, res, next) {
 
 // --- Public form ---
 app.get('/', (req, res) => {
+  db.recordView().catch((err) => console.error('failed to record view', err));
   res.render('form', { error: null });
 });
 
@@ -95,8 +96,8 @@ app.post('/admin/logout', (req, res) => {
 // --- Admin dashboard ---
 app.get('/admin', requireAdmin, async (req, res, next) => {
   try {
-    const submissions = await db.list();
-    res.render('admin', { submissions });
+    const [submissions, viewStats] = await Promise.all([db.list(), db.viewStats()]);
+    res.render('admin', { submissions, viewStats });
   } catch (err) {
     next(err);
   }

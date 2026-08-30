@@ -20,6 +20,17 @@
       </div>
     </div>
 
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-value"><%= viewStats.lastDay %></div>
+        <div class="stat-label">link opens, last 24 hours</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value"><%= viewStats.lastWeek %></div>
+        <div class="stat-label">link opens, last 7 days</div>
+      </div>
+    </div>
+
     <% if (submissions.length === 0) { %>
       <div class="empty-state">No submissions yet.</div>
     <% } else { %>

@@ -4,3 +4,6 @@ node_modules/
 data/*.db
 public/uploads/*
 !public/uploads/.gitkeep
+
+.vercel
+.env*

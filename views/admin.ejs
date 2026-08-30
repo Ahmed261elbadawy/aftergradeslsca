@@ -50,16 +50,15 @@
               <td><%= s.email %></td>
               <td><%= s.guest_of || '-' %></td>
               <td><%= s.paid_to || '-' %></td>
-              <td><span class="badge badge-<%= s.status %>"><%= s.status %></span></td>
+              <td><span class="badge badge-<%= s.status %>"><%= s.status === 'rejected' ? 'fake' : s.status %></span></td>
               <td><%= s.created_at %></td>
               <td>
                 <form class="status-form" action="/admin/<%= s.id %>/status" method="POST">
-                  <select name="status">
+                  <select name="status" onchange="this.form.submit()">
                     <option value="pending" <%= s.status === 'pending' ? 'selected' : '' %>>Pending</option>
                     <option value="approved" <%= s.status === 'approved' ? 'selected' : '' %>>Approved</option>
-                    <option value="rejected" <%= s.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+                    <option value="rejected" <%= s.status === 'rejected' ? 'selected' : '' %>>Fake</option>
                   </select>
-                  <button type="submit" class="btn-outline">Save</button>
                 </form>
                 <form action="/admin/<%= s.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this submission?');">
                   <button type="submit" class="del-btn">Delete</button>

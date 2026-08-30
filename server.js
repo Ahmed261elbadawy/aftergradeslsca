@@ -1,4 +1,11 @@
 require('dotenv').config();
+
+// Safety net: never let an unhandled rejection kill the whole serverless
+// process (it would fail every route, not just the one that errored).
+process.on('unhandledRejection', (err) => {
+  console.error('unhandledRejection', err);
+});
+
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -140,6 +147,11 @@ app.get('/admin/export.csv', requireAdmin, async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send('Something went wrong. Please try again.');
 });
 
 if (require.main === module) {

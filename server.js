@@ -128,7 +128,7 @@ app.post('/admin/:id/delete', requireAdmin, async (req, res, next) => {
 app.get('/admin/export.csv', requireAdmin, async (req, res, next) => {
   try {
     const rows = await db.list();
-    const header = ['ID', 'Name', 'Phone', 'Email', 'Coming With (if not ESLSCAN)', 'Paid To', 'Status', 'Screenshot', 'Submitted At'];
+    const header = ['ID', 'Name', 'Phone', 'Email', 'Coming With (if not ESLSCIAN)', 'Paid To', 'Status', 'Screenshot', 'Submitted At'];
     const escape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const lines = [header.join(',')];
     for (const r of rows) {

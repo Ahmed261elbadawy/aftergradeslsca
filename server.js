@@ -52,9 +52,9 @@ app.get('/', (req, res) => {
 
 app.post('/submit', upload.single('screenshot'), async (req, res, next) => {
   try {
-    const { name, email, phone, paid_to, guest_of } = req.body;
+    const { name, email, phone, paid_to, guest_of, social_media } = req.body;
 
-    if (!name || !email || !phone || !paid_to || !req.file) {
+    if (!name || !email || !phone || !paid_to || !social_media || !req.file) {
       return res.render('form', { error: 'Please fill in all required fields and upload your payment screenshot.' });
     }
 
@@ -65,6 +65,7 @@ app.post('/submit', upload.single('screenshot'), async (req, res, next) => {
       email: email.trim(),
       phone: phone.trim(),
       guestOf: (guest_of || '').trim() || null,
+      socialMedia: (social_media || '').trim() || null,
       screenshotUrl,
       paidTo: paid_to
     });
@@ -129,7 +130,7 @@ app.post('/admin/:id/delete', requireAdmin, async (req, res, next) => {
 app.get('/admin/export.csv', requireAdmin, async (req, res, next) => {
   try {
     const rows = await db.list();
-    const header = ['ID', 'Name', 'Phone', 'Email', 'Coming With (if not ESLSCIAN)', 'Paid To', 'Status', 'Screenshot', 'Submitted At'];
+    const header = ['ID', 'Name', 'Phone', 'Email', 'Coming With (if not ESLSCIAN)', 'Social Media', 'Paid To', 'Status', 'Screenshot', 'Submitted At'];
     const escape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const lines = [header.join(',')];
     for (const r of rows) {
@@ -137,7 +138,7 @@ app.get('/admin/export.csv', requireAdmin, async (req, res, next) => {
         ? r.screenshot_url
         : `${req.protocol}://${req.get('host')}${r.screenshot_url}`;
       lines.push([
-        r.id, r.name, r.phone, r.email, r.guest_of, r.paid_to, r.status,
+        r.id, r.name, r.phone, r.email, r.guest_of, r.social_media, r.paid_to, r.status,
         screenshotUrl,
         r.created_at
       ].map(escape).join(','));

@@ -105,6 +105,36 @@ label {
   color: var(--text);
 }
 
+.radio-row {
+  display: flex;
+  gap: 12px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin: 0;
+  background: #fff;
+}
+
+.radio-option input {
+  width: auto;
+  margin: 0;
+}
+
+.radio-option:has(input:checked) {
+  border-color: var(--navy);
+  background: rgba(15,76,129,0.06);
+}
+
 input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select {
   width: 100%;
   padding: 11px 12px;

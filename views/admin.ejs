@@ -42,6 +42,7 @@
             <th>Name</th>
             <th>Phone</th>
             <th>Social Media</th>
+            <th>+21</th>
             <th>Coming With</th>
             <th>Paid To</th>
             <th>Status</th>
@@ -60,6 +61,7 @@
               <td><%= s.name %></td>
               <td><%= s.phone %></td>
               <td><%= s.social_media || '-' %></td>
+              <td><%= s.over_21 === 'yes' ? 'Yes' : (s.over_21 === 'no' ? 'No' : '-') %></td>
               <td><%= s.guest_of || '-' %></td>
               <td><%= s.paid_to || '-' %></td>
               <td>

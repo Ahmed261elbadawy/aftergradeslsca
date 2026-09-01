@@ -59,6 +59,12 @@ body {
   opacity: 0.85;
 }
 
+.topbar img.topbar-icon {
+  height: 26px;
+  width: auto;
+  margin-top: 2px;
+}
+
 .wrap {
   max-width: 560px;
   margin: 0 auto;

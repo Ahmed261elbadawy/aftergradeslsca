@@ -37,9 +37,6 @@
         <label for="phone">Phone Number <span class="required-star">*</span></label>
         <input type="tel" id="phone" name="phone" placeholder="01xxxxxxxxx" required>
 
-        <label for="email">Email <span class="required-star">*</span></label>
-        <input type="email" id="email" name="email" placeholder="you@example.com" required>
-
         <label for="social_media">Social Media Link <span class="required-star">*</span></label>
         <input type="text" id="social_media" name="social_media" placeholder="e.g. instagram.com/yourusername" required>
 
@@ -67,16 +64,16 @@
           </div>
         </div>
 
+        <label for="screenshot">Payment Screenshot <span class="required-star">*</span></label>
+        <input type="file" id="screenshot" name="screenshot" accept="image/*,.pdf" required>
+        <div class="help">Upload a screenshot or PDF of your payment confirmation (max 8MB).</div>
+
         <label for="paid_to">Payment Method <span class="required-star">*</span></label>
         <select id="paid_to" name="paid_to" required>
           <option value="" disabled selected>Select how you paid</option>
           <option value="InstaPay">InstaPay</option>
           <option value="Telda">Telda</option>
         </select>
-
-        <label for="screenshot">Payment Screenshot <span class="required-star">*</span></label>
-        <input type="file" id="screenshot" name="screenshot" accept="image/*,.pdf" required>
-        <div class="help">Upload a screenshot or PDF of your payment confirmation (max 8MB).</div>
 
         <button type="submit" class="btn-primary">Submit</button>
       </form>

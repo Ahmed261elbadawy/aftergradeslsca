@@ -29,7 +29,7 @@
         <div class="error"><%= error %></div>
       <% } %>
 
-      <form action="/submit" method="POST" enctype="multipart/form-data">
+      <form action="/submit" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(this)">
         <label for="name">Full Name <span class="required-star">*</span></label>
         <input type="text" id="name" name="name" placeholder="e.g. Sara Ahmed" required>
 
@@ -74,9 +74,20 @@
           <option value="Telda">Telda</option>
         </select>
 
-        <button type="submit" class="btn-primary">Submit</button>
+        <button type="submit" class="btn-primary" id="submit-btn">Submit</button>
       </form>
     </div>
   </div>
+
+  <script>
+    function handleFormSubmit(form) {
+      const btn = document.getElementById('submit-btn');
+      if (btn.dataset.submitting === 'true') return false;
+      btn.dataset.submitting = 'true';
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+      return true;
+    }
+  </script>
 </body>
 </html>

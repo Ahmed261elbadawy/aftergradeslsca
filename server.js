@@ -58,14 +58,25 @@ app.post('/submit', upload.single('screenshot'), async (req, res, next) => {
       return res.render('form', { error: 'Please fill in all required fields and upload your payment screenshot.' });
     }
 
+    const phoneTrimmed = phone.trim();
+    const socialMediaTrimmed = (social_media || '').trim() || null;
+
+    // Guards against double-tapped Submit / a resubmit after a slow upload:
+    // if the same phone + social link was submitted moments ago, treat this
+    // as the same attempt instead of creating a second row.
+    const recentDuplicate = await db.findRecentDuplicate(phoneTrimmed, socialMediaTrimmed, 120);
+    if (recentDuplicate) {
+      return res.render('success');
+    }
+
     const screenshotUrl = await storage.saveFile(req.file);
 
     await db.insert({
       name: name.trim(),
       email: '',
-      phone: phone.trim(),
+      phone: phoneTrimmed,
       guestOf: (guest_of || '').trim() || null,
-      socialMedia: (social_media || '').trim() || null,
+      socialMedia: socialMediaTrimmed,
       over21: null,
       screenshotUrl,
       paidTo: paid_to

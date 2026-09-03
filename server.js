@@ -95,11 +95,38 @@ app.post('/admin/logout', (req, res) => {
   req.session.destroy(() => res.redirect('/admin/login'));
 });
 
+function normalizeDupKey(phone, socialMedia) {
+  const p = (phone || '').replace(/\D/g, '');
+  const s = (socialMedia || '').trim().toLowerCase().replace(/\/+$/, '');
+  if (!p || !s) return null;
+  return `${p}|${s}`;
+}
+
+function buildDuplicateGroups(submissions) {
+  const groups = new Map();
+  for (const s of submissions) {
+    const key = normalizeDupKey(s.phone, s.social_media);
+    if (!key) continue;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(s);
+  }
+  const duplicateGroups = [];
+  const dupIdToGroupIndex = new Map();
+  for (const members of groups.values()) {
+    if (members.length < 2) continue;
+    const groupIndex = duplicateGroups.length;
+    duplicateGroups.push(members);
+    for (const m of members) dupIdToGroupIndex.set(String(m.id), groupIndex);
+  }
+  return { duplicateGroups, dupIdToGroupIndex };
+}
+
 // --- Admin dashboard ---
 app.get('/admin', requireAdmin, async (req, res, next) => {
   try {
     const [submissions, viewStats] = await Promise.all([db.list(), db.viewStats()]);
-    res.render('admin', { submissions, viewStats });
+    const { duplicateGroups, dupIdToGroupIndex } = buildDuplicateGroups(submissions);
+    res.render('admin', { submissions, viewStats, duplicateGroups, dupIdToGroupIndex });
   } catch (err) {
     next(err);
   }
@@ -122,6 +149,24 @@ app.post('/admin/:id/delete', requireAdmin, async (req, res, next) => {
     await db.remove(req.params.id);
     await storage.deleteFile(url);
     res.redirect('/admin');
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/admin/merge', requireAdmin, async (req, res, next) => {
+  try {
+    const keepId = req.body.keepId;
+    const removeIds = (req.body.removeIds || '').split(',').map((s) => s.trim()).filter(Boolean);
+    if (!keepId || removeIds.length === 0) return res.status(400).json({ error: 'Missing keepId or removeIds' });
+
+    for (const id of removeIds) {
+      if (id === keepId) continue;
+      const url = await db.getScreenshotUrl(id);
+      await db.remove(id);
+      await storage.deleteFile(url);
+    }
+    res.json({ ok: true });
   } catch (err) {
     next(err);
   }

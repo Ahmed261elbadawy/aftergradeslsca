@@ -29,6 +29,12 @@
         <div class="stat-value"><%= viewStats.lastWeek %></div>
         <div class="stat-label">link opens, last 7 days</div>
       </div>
+      <% if (duplicateGroups.length > 0) { %>
+        <div class="stat-box stat-box-warn">
+          <div class="stat-value"><%= duplicateGroups.length %></div>
+          <div class="stat-label">duplicate group<%= duplicateGroups.length === 1 ? '' : 's' %> found</div>
+        </div>
+      <% } %>
     </div>
 
     <% if (submissions.length === 0) { %>
@@ -57,7 +63,14 @@
                   <img class="thumb" src="<%= s.screenshot_url %>" alt="screenshot">
                 </a>
               </td>
-              <td><%= s.name %></td>
+              <td>
+                <%= s.name %>
+                <% if (dupIdToGroupIndex.has(String(s.id))) { %>
+                  <button type="button" class="dup-badge" onclick="openDupModal(<%= dupIdToGroupIndex.get(String(s.id)) %>)">
+                    <%= duplicateGroups[dupIdToGroupIndex.get(String(s.id))].length %> duplicates
+                  </button>
+                <% } %>
+              </td>
               <td><%= s.phone %></td>
               <td><%= s.social_media || '-' %></td>
               <td><%= s.guest_of || '-' %></td>
@@ -86,7 +99,76 @@
     <% } %>
   </div>
 
+  <div id="dup-modal-backdrop" class="dup-modal-backdrop" onclick="if(event.target===this) closeDupModal()">
+    <div class="dup-modal">
+      <div class="dup-modal-header">
+        <h2>Merge duplicates</h2>
+        <button type="button" class="dup-modal-close" onclick="closeDupModal()">&times;</button>
+      </div>
+      <p class="dup-modal-hint">Pick the submission to keep. The others in this group will be deleted.</p>
+      <div id="dup-modal-list"></div>
+      <div class="dup-modal-actions">
+        <button type="button" class="btn-outline" onclick="closeDupModal()">Cancel</button>
+        <button type="button" class="btn-primary" style="width:auto; margin-top:0;" onclick="confirmMerge()">Merge</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    const duplicateGroups = <%- JSON.stringify(duplicateGroups).replace(/</g, '\\u003c') %>;
+    let activeGroupIndex = null;
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str == null ? '' : String(str);
+      return div.innerHTML;
+    }
+
+    function openDupModal(groupIndex) {
+      activeGroupIndex = groupIndex;
+      const group = duplicateGroups[groupIndex];
+      const list = document.getElementById('dup-modal-list');
+      list.innerHTML = group.map((s, i) => `
+        <label class="dup-entry">
+          <input type="radio" name="dup-keep" value="${escapeHtml(s.id)}" ${i === 0 ? 'checked' : ''}>
+          <img class="thumb" src="${escapeHtml(s.screenshot_url)}" alt="screenshot">
+          <span class="dup-entry-info">
+            <strong>${escapeHtml(s.name)}</strong>
+            <span>${escapeHtml(s.phone)}</span>
+            <span>${escapeHtml(s.social_media || '')}</span>
+            <span>${escapeHtml(s.status)}</span>
+            <span>${escapeHtml(s.created_at)}</span>
+          </span>
+        </label>
+      `).join('');
+      document.getElementById('dup-modal-backdrop').style.display = 'flex';
+    }
+
+    function closeDupModal() {
+      document.getElementById('dup-modal-backdrop').style.display = 'none';
+      activeGroupIndex = null;
+    }
+
+    async function confirmMerge() {
+      const checked = document.querySelector('input[name="dup-keep"]:checked');
+      if (!checked) return;
+      const keepId = checked.value;
+      const group = duplicateGroups[activeGroupIndex];
+      const removeIds = group.map((s) => String(s.id)).filter((id) => id !== keepId).join(',');
+
+      try {
+        const res = await fetch('/admin/merge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `keepId=${encodeURIComponent(keepId)}&removeIds=${encodeURIComponent(removeIds)}`
+        });
+        if (!res.ok) throw new Error('failed');
+        window.location.reload();
+      } catch (err) {
+        alert('Could not merge, please try again.');
+      }
+    }
+
     const labels = { pending: 'pending', approved: 'approved', rejected: 'fake' };
 
     async function updateStatus(select) {
